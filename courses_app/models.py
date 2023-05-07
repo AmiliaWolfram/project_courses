@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from users_app.models import Tutor, Student
 
@@ -10,15 +10,8 @@ from users_app.models import Tutor, Student
 class Language(models.Model):
     denomination = models.CharField(max_length=20)
 
-
-def date_func(date_started, duration):
-    date_ended1 = date_started + timedelta(days=duration)
-    return date_ended1
-
-
-# def get_end_date(date_started, duration):
-#     date_ended = date_started + timedelta(months=duration)
-#     return datetime.strptime(date_ended, '%Y-%m-%d')
+    def __str__(self):
+        return self.denomination
 
 
 @receiver(post_save, sender=Language)
@@ -38,8 +31,24 @@ def update_language_field(sender, instance, **kwargs):
 
 class Course(models.Model):
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True)
+    level = models.CharField(max_length=2, choices=[
+            ('A1', 'A1'),
+            ('A2', 'A2'),
+            ('B1', 'B1'),
+            ('B2', 'B2'),
+            ('C1', 'C1'),
+            ('C2', 'C2')
+        ]
+    )
     tutor = models.ForeignKey(Tutor, on_delete=models.SET_NULL, null=True, blank=True)
     students = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True, blank=True)
     date_started = models.DateTimeField()
     duration = models.IntegerField()
     date_ended = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        self.date_ended = self.date_started + timedelta(days=self.duration * 30)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.language.denomination} {self.level} Course'
