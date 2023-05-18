@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'courses_app',
     'users_app',
+    'recall',
 ]
 
 MIDDLEWARE = [
