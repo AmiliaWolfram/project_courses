@@ -18,6 +18,7 @@ class Tutor(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
     experience = models.IntegerField()
     votes = models.IntegerField(default=0)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
