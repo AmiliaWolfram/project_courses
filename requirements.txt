@@ -1,6 +1,6 @@
 django==3.2
 djangorestframework
 Pillow
-djangorestframework_simplejwt
+
 django-cors-headers
 rest_framework_simplejwt
