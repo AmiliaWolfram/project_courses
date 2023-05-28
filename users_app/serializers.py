@@ -109,6 +109,7 @@ class TutorRegisterSerializer(serializers.ModelSerializer):
         if created:
             Token.objects.create(user=instance)
 
+
 class TutorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tutor
@@ -119,3 +120,10 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
+
+
+class VoteForTutorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
+        read_only_fields = ['user', ]

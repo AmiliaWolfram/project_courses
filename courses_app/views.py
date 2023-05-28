@@ -9,14 +9,14 @@ from datetime import timedelta
 from users_app.models import Tutor, Student
 from courses_app.models import Course, Language
 from courses_app.serializers import CourseSerializer, LanguageSerializer
-from courses_app.permissions import IsTutorStaffOrIsAuthenticated
+from courses_app.permissions import IsTutor
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [IsTutorStaffOrIsAuthenticated, ]
+    permission_classes = [IsTutor, ]
 
     def perform_create(self, request):
         language_id = request.data.get('language')
@@ -56,4 +56,4 @@ class LanguageViewSet(viewsets.ModelViewSet):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [IsTutorStaffOrIsAuthenticated, ]
+    permission_classes = [IsTutor, ]

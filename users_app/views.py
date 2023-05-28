@@ -1,68 +1,58 @@
 from rest_framework import generics, status
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
 
+from courses_app.permissions import IsStudent
 from .models import User, Tutor, Student
 from .serializers import StudentRegisterSerializer, TutorRegisterSerializer, \
-    TutorSerializer, StudentSerializer
-from courses_app.permissions import IsStudentOrTutor
+    TutorSerializer, StudentSerializer, VoteForTutorSerializer
 
 
 class UserStudentRegisterAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = StudentRegisterSerializer
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 
 class UserTutorRegisterAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = TutorRegisterSerializer
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 
 class TutorViewSet(generics.ListAPIView):
     queryset = Tutor.objects.all()
     serializer_class = TutorSerializer
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 
 class StudentViewSet(generics.ListAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-
-
-class StudentVoteAPIView(APIView):
-    def get(self, request, student_id):
-        student = Student.objects.get(pk=student_id)
-        serializer = StudentSerializer(student)
-        return Response(serializer.data)
-
-    def post(self, request, student_id):
-        student = Student.objects.get(pk=student_id)
-        serializer = StudentSerializer(student)
-
-        tutor_id = request.data.get('tutor_id')
-        tutor = Tutor.objects.get(pk=tutor_id)
-        student.vote_for_teacher(tutor)
-        serializer = StudentSerializer(student)
-
-        return Response(serializer.data)
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 
 class RegistrationTutorRequestAPIView(generics.CreateAPIView):
     queryset = Tutor.objects.all()
     serializer_class = TutorRegisterSerializer
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 
-class VoteForTutorView(generics.CreateAPIView):
-    serializer_class = StudentSerializer
-    permission_classes = [IsStudentOrTutor, ]
+class VoteForTutorViewSet(ViewSet):
+    serializer_class = VoteForTutorSerializer
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsStudent, ]
 
     def create(self, request, *args, **kwargs):
         student = self.get_student_object(request.user)
-        teacher_id = request.data.get('teacher_id')
+        tutor_id = request.data.get('tutor_id')
 
-        if teacher_id is not None:
-            teacher = get_object_or_404(Tutor, id=teacher_id)
-            student.vote_for_tutor(teacher)
+        if tutor_id is not None:
+            tutor = get_object_or_404(Tutor, id=tutor_id)
+            student.vote_for_tutor(tutor)
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

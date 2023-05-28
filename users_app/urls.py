@@ -1,7 +1,11 @@
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.routers import DefaultRouter
 
 from . import views
+
+router = DefaultRouter()
+router.register('vote/', views.VoteForTutorViewSet, basename='vote-for-tutor')
 
 urlpatterns = [
     path('register/student/', views.UserStudentRegisterAPIView.as_view()),
@@ -10,5 +14,5 @@ urlpatterns = [
     path('list/students/', views.StudentViewSet.as_view()),
     path('token/', obtain_auth_token),
     path('auth', include('rest_framework.urls')),
-    path('vote/', views.VoteForTutorView.as_view(), name='vote_for_tutor')
+    path('viewset/', include(router.urls))
 ]
