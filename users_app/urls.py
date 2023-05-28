@@ -10,4 +10,5 @@ urlpatterns = [
     path('list/students/', views.StudentViewSet.as_view()),
     path('token/', obtain_auth_token),
     path('auth', include('rest_framework.urls')),
+    path('vote/', views.VoteForTutorView.as_view(), name='vote_for_tutor')
 ]

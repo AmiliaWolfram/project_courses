@@ -30,8 +30,7 @@ class Tutor(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
-    tutors = models.ManyToManyField(Tutor, related_name='students', null=True, blank=True)
-    voted_tutor = models.ForeignKey(Tutor, null=True, blank=True, on_delete=models.SET_NULL)
+    tutors = models.ManyToManyField(Tutor, related_name='students')
 
     @staticmethod
     def update_tutors(sender, instance, action, pk_set, **kwargs):
@@ -47,10 +46,6 @@ class Student(models.Model):
     def __str__(self):
         return self.user.username
 
-    def vote_for_tutor(self, teacher):
-        if self.voted_tutor is not None:
-            self.voted_tutor.votes -= 1
-            self.voted_tutor.save()
-        self.voted_teacher = teacher
-        teacher.increment_votes()
+    def vote_for_tutor(self, tutor):
+        tutor.increment_votes()
         self.save()

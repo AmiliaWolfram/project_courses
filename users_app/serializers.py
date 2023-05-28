@@ -1,7 +1,4 @@
-from rest_framework import serializers, generics
-from rest_framework.exceptions import ValidationError
-
-from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 from users_app.models import User, Tutor, Student
 from django.conf import settings
@@ -75,6 +72,13 @@ class TutorRegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Password must contain letters")
         if not any(char.isupper() for char in data['password']) or not any(char.islower() for char in data['password']):
             raise serializers.ValidationError("Password must contain both uppercase and lowercase letters")
+        if data['age'] < 18:
+            raise serializers.ValidationError("The tutor can't be under 18 years of age.")
+        if int(data['age']) < int(data['experience']):
+            raise serializers.ValidationError("Experience can't be greater than your age!")
+        residual = int(data['age']) - int(data['experience'])
+        if residual < 18:
+            raise serializers.ValidationError("You couldn't start working before the age og 18!")
         return data
 
     def create(self, validated_data):

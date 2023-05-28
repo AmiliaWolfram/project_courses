@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from datetime import timedelta
+from datetime import timedelta, datetime
+from dateutil.parser import parse
 
 from users_app.models import Tutor, Student
 
@@ -47,7 +48,14 @@ class Course(models.Model):
     date_ended = models.DateTimeField()
 
     def save(self, *args, **kwargs):
-        self.date_ended = self.date_started + timedelta(days=self.duration * 30)
+        if self.date_started and self.duration:
+            duration_days = int(self.duration) * 30  # Преобразование в целое число и умножение на 30
+
+            # Предполагается, что self.date_started является строкой в формате даты и времени
+            self.date_started = parse(self.date_started)
+
+            self.date_ended = self.date_started + timedelta(days=duration_days)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
