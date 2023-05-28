@@ -44,7 +44,8 @@ class CourseViewSet(viewsets.ModelViewSet):
             students=students,
             date_started=date_started,
             duration=duration,
-            date_ended=date_ended
+            date_ended=date_ended,
+            tutor= self.request.user.tutor
         )
         course.save()
 
