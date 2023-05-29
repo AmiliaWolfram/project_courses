@@ -46,7 +46,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             date_started=date_started,
             duration=duration,
             date_ended=date_ended,
-            tutor= self.request.user.tutor
+            tutor=self.request.user.tutor
         )
         course.save()
 
@@ -71,4 +71,4 @@ class LanguageViewSet(viewsets.ModelViewSet):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [IsTutor, IsAuthenticated, IsAuthorTutorOrReadOnly]
+    permission_classes = [IsTutor, IsAuthenticated, ]

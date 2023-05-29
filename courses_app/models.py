@@ -31,7 +31,7 @@ def update_language_field(sender, instance, **kwargs):
 
 
 class Course(models.Model):
-    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
     level = models.CharField(max_length=2, choices=[
             ('A1', 'A1'),
             ('A2', 'A2'),
