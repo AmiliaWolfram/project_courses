@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
 from datetime import timedelta
 
 from users_app.models import Tutor, Student
@@ -16,7 +16,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [IsTutor, ]
+    # permission_classes = [IsTutor, ]
+    permission_classes = [IsTutor, IsAuthenticated]
 
     def perform_create(self, request):
         language_id = request.data.get('language')
@@ -52,9 +53,22 @@ class CourseViewSet(viewsets.ModelViewSet):
         serializer = CourseSerializer(course)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def perform_update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        # Convert date_started to string
+        date_started = instance.date_started.strftime('%Y-%m-%dT%H:%M:%S')
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+
 
 class LanguageViewSet(viewsets.ModelViewSet):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [IsTutor, ]
+    permission_classes = [IsTutor, IsAuthenticated]
