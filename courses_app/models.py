@@ -42,7 +42,8 @@ class Course(models.Model):
         ]
     )
     tutor = models.ForeignKey(Tutor, on_delete=models.SET_NULL, null=True, blank=True)
-    students = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True, blank=True)
+    # students = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True, blank=True)
+    students = models.ManyToManyField(Student, blank=True)
     date_started = models.DateTimeField()
     duration = models.IntegerField()
     date_ended = models.DateTimeField()
