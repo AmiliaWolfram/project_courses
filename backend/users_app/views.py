@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from courses_app.permissions import IsStudent
+from courses_app.permissions import IsStudent, IsAuthorStudentOrReadOnly
 from .models import User, Tutor, Student
 from .serializers import StudentRegisterSerializer, TutorRegisterSerializer, \
     TutorSerializer, StudentSerializer, VoteForTutorSerializer
@@ -15,6 +15,7 @@ class UserStudentRegisterAPIView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = StudentRegisterSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
+
 
 
 class UserTutorRegisterAPIView(generics.CreateAPIView):
@@ -44,7 +45,7 @@ class RegistrationTutorRequestAPIView(generics.CreateAPIView):
 class VoteForTutorViewSet(ViewSet):
     serializer_class = VoteForTutorSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [IsStudent, ]
+    permission_classes = [IsStudent, IsAuthorStudentOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         student = self.get_student_object(request.user)
@@ -56,6 +57,21 @@ class VoteForTutorViewSet(ViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, pk=None):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, pk=None):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, pk=None):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, pk=None):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def get_student_object(self, user):
         student = get_object_or_404(Student, user=user)

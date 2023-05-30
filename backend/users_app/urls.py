@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
-router.register('vote/', views.VoteForTutorViewSet, basename='vote-for-tutor')
+router.register('vote', views.VoteForTutorViewSet, basename='vote-for-tutor')
 
 urlpatterns = [
     path('register/student/', views.UserStudentRegisterAPIView.as_view()),

@@ -1,6 +1,9 @@
 django==4.2
 djangorestframework
 Pillow
+django-environ
 
 django-cors-headers
 python-dateutil
+psycopg2-binary
+gunicorn

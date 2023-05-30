@@ -27,7 +27,7 @@ class StudentRegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "password", "password2",
                   "first_name", "last_name", "profile_image", "age", "tutors"]
-
+        read_only_fields = ['profile', ]
     def validate(self, data):
         if data['password'] != data['password2']:
             raise serializers.ValidationError("Passwords don't match")
@@ -65,7 +65,8 @@ class StudentRegisterSerializer(serializers.ModelSerializer):
 class TutorRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=20, write_only=True)
     password2 = serializers.CharField(max_length=20, write_only=True)
-    experience = serializers.CharField(max_length=100, allow_null=True)
+    # experience = serializers.CharField(max_length=100, allow_null=True)
+    experience = serializers.IntegerField(allow_null=True)
     students = serializers.PrimaryKeyRelatedField(many=True, queryset=Student.objects.all(), allow_empty=True, required=False)
 
     class Meta:
@@ -124,4 +125,4 @@ class VoteForTutorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
-        read_only_fields = ['user', ]
+        read_only_fields = ['user', 'tutors']
