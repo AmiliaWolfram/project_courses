@@ -65,7 +65,8 @@ class StudentRegisterSerializer(serializers.ModelSerializer):
 class TutorRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=20, write_only=True)
     password2 = serializers.CharField(max_length=20, write_only=True)
-    experience = serializers.CharField(max_length=100, allow_null=True)
+    # experience = serializers.CharField(max_length=100, allow_null=True)
+    experience = serializers.IntegerField(allow_null=True)
     students = serializers.PrimaryKeyRelatedField(many=True, queryset=Student.objects.all(), allow_empty=True, required=False)
 
     class Meta:
